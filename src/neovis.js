@@ -504,4 +504,37 @@ export function objectToTitleString(neo4jNode, title_properties) {
 	return title;
 }
 
+export function objectToTooltip(neo4jElem, title_properties) {
+	//html string
+	let titleString = '';
+	
+	//check if neo4j element is an edge or node
+	//put node label or rel type on top of the tooltip (underline and bold)
+	if (neo4jElem.type) {
+		//put relationship type on top of title
+		titleString = `<strong><u>${neo4jElem.type}</u></strong><br>`;
+	} else {
+		//put node labe on top of title
+		//titleString = `<strong><u>${neo4jElem.labels[0]}</u></strong><br>`;
+		titleString = `<strong><u>${neo4jElem.labels.join(' ')}</u></strong><br>`;
+	}
+	
+	if (!title_properties) {
+		title_properties = Object.keys(neo4jElem.properties);
+	}
+	for (const key of title_properties) {
+		const propVal = _retrieveProperty(key, neo4jElem);
+		if (propVal) {
+			titleString += _propertyToHtml(key, propVal);
+		}
+	}
+
+	//define a html container and put the html string
+	let title = document.createElement("div");
+	title.innerHTML = titleString;
+
+	return title;
+}
+
+
 export default NeoVis;
